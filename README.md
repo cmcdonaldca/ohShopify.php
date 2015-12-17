@@ -2,10 +2,16 @@
 
 Lightweight multi-paradigm PHP (JSON) client for the [Shopify API](http://api.shopify.com/).
 
+## Installation
+With Composer:
+```sh
+composer require wic/shopify-api-client
+```
+
 
 ## Requirements
 
-* PHP 4 with [cURL support](http://php.net/manual/en/book.curl.php).
+* PHP 5.4 with [cURL support](http://php.net/manual/en/book.curl.php).
 * Only compatible OAuth Shopify Apps.  For Legacy Authentication: [Use an old version of ohShopify.php](https://github.com/cmcdonaldca/ohShopify.php/blob/7ee7a344ca83518a0560ba585d4f8deab65bf5cd/shopify.php)
 
 
@@ -16,7 +22,8 @@ Basic needs for authorization and redirecting
 ```php
 <?php
 
-	require 'shopify.php';
+	use WIC\ShopifyClient;
+
 	if (isset($_GET['code'])) { // if the code param has been sent to this page... we are in Step 2
 		// Step 2: do a form POST to get the access token
 		$shopifyClient = new ShopifyClient($_GET['shop'], "", SHOPIFY_API_KEY, SHOPIFY_SECRET);
@@ -80,7 +87,7 @@ Making API calls:
 ```php
 <?php
 
-	require 'shopify.php';
+	use WIC\ShopifyClient;
 
 	$sc = new ShopifyClient($_SESSION['shop'], $_SESSION['token'], $api_key, $secret);
 
@@ -140,7 +147,7 @@ When receiving requests from the Shopify API, validate the signature value:
 
 ```php
 <?php
-
+    use WIC\ShopifyClient;
     $sc = new ShopifyClient($_GET['shop'], '', SHOPIFY_API_KEY, SHOPIFY_SECRET);
 
     if(!$sc->validateSignature($_GET))

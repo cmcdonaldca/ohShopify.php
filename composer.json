@@ -1,0 +1,30 @@
+{
+    "name": "wic/shopify-api-client",
+    "description": "Lightweight multi-paradigm PHP (JSON) client for the Shopify API.",
+    "type": "library",
+    "require": {
+        "php": ">= 5.4.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "license": "GNU GPL v3",
+    "authors": [
+        {
+            "name": "Gary PEGEOT",
+            "email": "gary@webincolor.fr"
+        },
+        {
+            "name": "Colin McDonald"
+        },
+        {
+            "name": "Sandeep Shetty",
+            "email": "sandeep.shetty@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "WIC\\": "lib/"
+        }
+    },
+    "minimum-stability": "stable"
+}
