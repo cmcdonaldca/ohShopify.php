@@ -53,6 +53,8 @@ class ShopifyClient {
 
 	public function call($method, $path, $params=array())
 	{
+		$this->sleepIfDesired();
+		
 		$baseurl = "https://{$this->shop_domain}/";
 	
 		$url = $baseurl.ltrim($path, '/');
@@ -86,6 +88,16 @@ class ShopifyClient {
 		$signature = md5($this->secret . implode('', $signature));
 
 		return $query['signature'] == $signature;
+	}
+	
+	//Checks if we are running out of API limits and sleep() if necessary - info about Api Call Limits: https://docs.shopify.com/api/introduction/api-call-limit
+	private function sleepIfDesired()
+	{
+		if ($this->last_response_headers != null)	//only on second and next requests
+		{
+			if($this->callsLeft() < 5)
+				usleep(0.5 * 1000000); 	//sleep for 0,5s
+		}
 	}
 
 	private function curlHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
