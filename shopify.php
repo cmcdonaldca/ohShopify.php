@@ -77,10 +77,14 @@ class ShopifyClient {
 		if(!is_array($query) || empty($query['hmac']) || !is_string($query['hmac']))
 			return false;
 
+		$hmac = $query['hmac'];
+		unset($query['hmac']);
+
+		if (isset($query['signature']))
+			unset($query['signature']);
+
 		$dataString = array();
 		foreach ($query as $key => $value) {
-			if(!in_array($key, array('shop', 'timestamp', 'code'))) continue;
-
 			$key = str_replace('=', '%3D', $key);
 			$key = str_replace('&', '%26', $key);
 			$key = str_replace('%', '%25', $key);
@@ -96,8 +100,8 @@ class ShopifyClient {
 
 		$signatureBin = mhash(MHASH_SHA256, $string, $this->secret);
 		$signature = bin2hex($signatureBin);
-		
-		return $query['hmac'] == $signature;
+
+		return $hmac == $signature;
 	}
 
 	private function curlHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
