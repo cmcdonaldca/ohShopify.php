@@ -22,12 +22,11 @@ class ShopifyClient {
 		}
 		
 		$url = "https://{$this->shop_domain}/admin/oauth/authorize?client_id={$this->api_key}&scope=" . urlencode($scope);
+		$url .='&state=' urlencode($state);
 		if ($redirect_url != '')
 		{
 			$url .= "&redirect_uri=" . urlencode($redirect_url);
 		}
-		
-		$url .='&state=' urlencode($redirect_url);
 		
 		return $url;
 	}
