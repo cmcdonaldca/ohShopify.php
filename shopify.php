@@ -15,12 +15,22 @@ class ShopifyClient {
 	}
 
 	// Get the URL required to request authorization
-	public function getAuthorizeUrl($scope, $redirect_url='') {
-		$url = "https://{$this->shop_domain}/admin/oauth/authorize?client_id={$this->api_key}&scope=" . urlencode($scope);
-		if ($redirect_url != '')
+	public function getAuthorizeUrl($scope, $redirect_uri, $nonce='', $options=array()) {
+		$query_string_params = array(
+			'client_id' => $this->api_key,
+			'scope' => $scope,
+			'redirect_uri' => $redirect_uri
+		);
+		if ($nonce != '')
 		{
-			$url .= "&redirect_uri=" . urlencode($redirect_url);
+			$query_string_params['state'] = $nonce;
 		}
+		if (!empty($options))
+		{
+			$query_string_params['grant_options'] = $options;
+		}
+		$query_string = http_build_query($query_string_params);
+		$url = "https://{$this->shop_domain}/admin/oauth/authorize?{$query_string}";
 		return $url;
 	}
 
@@ -79,7 +89,7 @@ class ShopifyClient {
 
 		$dataString = array();
 		foreach ($query as $key => $value) {
-			if(!in_array($key, array('shop', 'timestamp', 'code'))) continue;
+			if(!in_array($key, array('shop', 'timestamp', 'code', 'state'))) continue;
 
 			$key = str_replace('=', '%3D', $key);
 			$key = str_replace('&', '%26', $key);
