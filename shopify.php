@@ -79,7 +79,7 @@ class ShopifyClient {
 
 		$dataString = array();
 		foreach ($query as $key => $value) {
-			if(!in_array($key, array('shop', 'timestamp', 'code'))) continue;
+			if(!in_array($key, array('shop', 'timestamp', 'code', 'state'))) continue;
 
 			$key = str_replace('=', '%3D', $key);
 			$key = str_replace('&', '%26', $key);
