@@ -94,7 +94,10 @@ class ShopifyClient {
 		
 		$string = implode("&", $dataString);
 
-		$signatureBin = mhash(MHASH_SHA256, $string, $this->secret);
+		if (version_compare(PHP_VERSION, '5.3.0', '>='))
+			$signatureBin = hash_hmac('sha256', $string, $this->secret);
+		    else
+			$signatureBin = mhash(MHASH_SHA256, $string, $this->secret);
 		$signature = bin2hex($signatureBin);
 		
 		return $query['hmac'] == $signature;
