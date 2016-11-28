@@ -5,6 +5,7 @@ class ShopifyClient {
 	private $api_key;
 	private $secret;
 	private $last_response_headers = null;
+	private $isPrivateApp = false;
 
 	public function __construct($shop_domain, $token, $api_key, $secret) {
 		$this->name = "ShopifyClient";
@@ -12,6 +13,9 @@ class ShopifyClient {
 		$this->token = $token;
 		$this->api_key = $api_key;
 		$this->secret = $secret;
+		if($this->token == null){
+            $this->isPrivateApp = true;
+        }
 	}
 
 	// Get the URL required to request authorization
@@ -53,15 +57,18 @@ class ShopifyClient {
 
 	public function call($method, $path, $params=array())
 	{
-		$baseurl = "https://{$this->shop_domain}/";
+		$baseurl = $this->isPrivateApp ? "https://{$this->api_key}:{$this->secret}@{$this->shop_domain}/" : "https://{$this->shop_domain}/";
 	
 		$url = $baseurl.ltrim($path, '/');
 		$query = in_array($method, array('GET','DELETE')) ? $params : array();
 		$payload = in_array($method, array('POST','PUT')) ? json_encode($params) : array();
 		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
 
-		// add auth headers
-		$request_headers[] = 'X-Shopify-Access-Token: ' . $this->token;
+		if(!$this->isPrivateApp)
+        {
+          // add auth headers for public app
+		  $request_headers[] = 'X-Shopify-Access-Token: ' . $this->token;
+        }
 
 		$response = $this->curlHttpApiRequest($method, $url, $query, $payload, $request_headers);
 		$response = json_decode($response, true);
